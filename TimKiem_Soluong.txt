@@ -1,0 +1,42 @@
+CREATE VIEW v_soluongsanpham
+AS SELECT
+tendm,
+Count(sanphams.idsp) AS soluong 
+FROM
+	danhmucsanphams
+	INNER JOIN sanphams ON sanphams.iddm = danhmucsanphams.iddm 
+GROUP BY
+	tendm;
+
+select * from v_soluongsanpham;
+
+CREATE PROCEDURE timkiem(_param VARCHAR ( 255 )) 
+BEGIN	
+	IF CONVERT(_param,DECIMAL) = 0 THEN	
+	  SELECT
+		tendm,
+		masp,
+		tensp,
+		gia 
+	FROM
+		danhmucsanphams
+		INNER JOIN sanphams ON sanphams.iddm = danhmucsanphams.iddm 
+	WHERE
+		tendm LIKE CONCAT('%',_param,'%')
+		OR masp LIKE CONCAT('%',_param,'%')
+		OR tensp LIKE CONCAT('%',_param,'%');
+	ELSE
+        SELECT
+		tendm,
+		masp,
+		tensp,
+		gia  
+	FROM
+		danhmucsanphams
+		INNER JOIN sanphams ON sanphams.iddm = danhmucsanphams.iddm 
+	WHERE
+	  gia >= CONVERT(_param,DECIMAL);
+	END IF;
+END
+
+call timkiem('d');
